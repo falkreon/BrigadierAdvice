@@ -6,11 +6,11 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-import net.minecraft.world.WorldProperties;
-import net.minecraft.world.level.ServerWorldProperties;
 
 public class BasicCommands {
 	/*
@@ -132,9 +132,15 @@ public class BasicCommands {
 	public static class CustomKillCommand implements Command<ServerCommandSource> {
 		@Override
 		public int run(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-			System.out.println(context.getSource().getDisplayName());
-			//context.getPlayer().kill(); //Good enough for now!
-			return 1; //positive numbers are success! Negative numbers are failure.
+			Entity entity = context.getSource().getEntity();
+			if (entity instanceof LivingEntity) {
+				entity.kill();
+				context.getSource().sendFeedback(Text.translatable("commands.kill.success.single", entity.getDisplayName()), true);
+				return 1; //Positive numbers are success! In this case, one target was killed.
+			} else {
+				context.getSource().sendFeedback(Text.of("Cound not kill the target"), true);
+				return -1; //Negative numbers are failure. Zero typically means nothing was affected.
+			}
 		}
 	}
 	

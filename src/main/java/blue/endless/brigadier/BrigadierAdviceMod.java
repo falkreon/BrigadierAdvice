@@ -12,6 +12,11 @@ import net.fabricmc.api.ModInitializer;
  * Start with BasicCommands.java - this is the original "How to Brigadier Without Making a Mess"
  * gist, except the commands are exectuable and updooted for minecraft 1.19 and recent Yarn shenanigans.
  * 
+ * Implements test_kill and test_weather commands.
+ * 
+ * 
+ * 
+ * 
  * 
  */
 
