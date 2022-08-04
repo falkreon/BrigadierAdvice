@@ -38,20 +38,10 @@ public class BasicCommands {
 	 * just contains the root node and some literal nodes.
 	 * 
 	 * 
-	 * Some nodes on the tree have `Command` objects hung on them. You have a lot of flexibility on where
-	 * to hang them. for `kill`, you'd definitely need to hang the KillCommand directly on the `kill` node,
-	 * because it's the only one. But for `weather`, you could either hang one Command each onto `clear`,
-	 * `rain`, and `thunder`, or you could hang a Command onto `weather` that could handle all three. If
-	 * the "leaf" node doesn't contain an `executes` clause, Brigadier will walk one level back up the tree
-	 * and check again, and keep doing so until it finds a command. If it walks all the way up to the root
-	 * without finding one, it'll grab the "command usage" for that command, and print out an error with it.
-	 * 
-	 * 
-	 *      It happens that vanilla puts the executes on `clear`, `rain`, and `thunder` for the
-	 *      weather command,  so that's what I'll show here.
-	 * 
-	 * 
-	 * 
+	 * In order for a command to be valid, so that you can hit enter and an error doesn't come up, the node you
+	 * "end" at needs to have an "executes" property set, basically a runnable command attached to it. When I originally
+	 * evaluated Brigadier I thought that it walked up the tree looking for this executes property, and it turns out,
+	 * it doesn't. It needs to be on the leaf node.
 	 */
 	
 	public static void register() {
@@ -113,7 +103,7 @@ public class BasicCommands {
 		 * - When you type a slash in on the client to start a command, Brigadier starts at the slash at
 		 *   the top of the tree, and as you keep typing, it takes different "branches" until it hits a part with
 		 *   no more branches (we call this a "leaf"). At this point you can hit return and a valid command
-		 *   will run.
+		 *   will run if there's a command attached to the leaf.
 		 * 
 		 * - I didn't really show it here, but you can mix and match! Make a set of subnodes with the fluent
 		 *   pattern, and then attach it to the main tree? Totally valid. Don't like how I organize commands
@@ -138,7 +128,7 @@ public class BasicCommands {
 				context.getSource().sendFeedback(Text.translatable("commands.kill.success.single", entity.getDisplayName()), true);
 				return 1; //Positive numbers are success! In this case, one target was killed.
 			} else {
-				context.getSource().sendFeedback(Text.of("Cound not kill the target"), true);
+				context.getSource().sendFeedback(Text.of("Could not kill the target"), true);
 				return -1; //Negative numbers are failure. Zero typically means nothing was affected.
 			}
 		}

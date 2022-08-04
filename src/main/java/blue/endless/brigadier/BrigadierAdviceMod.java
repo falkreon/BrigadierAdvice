@@ -3,6 +3,7 @@ package blue.endless.brigadier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import blue.endless.brigadier.pages.Arguments;
 import blue.endless.brigadier.pages.BasicCommands;
 import net.fabricmc.api.ModInitializer;
 
@@ -27,6 +28,7 @@ public class BrigadierAdviceMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		BasicCommands.register();
+		Arguments.register();
 	}
 	
 	
