@@ -22,11 +22,11 @@ public class BasicCommands {
 	 *                          #### So, let's talk about nodes. ####
 	 * 
 	 * 
-	 *      "/"
-	 *     /   \
-	 *  kill   weather
-	 *         /  |  \
-	 *    clear rain  thunder
+	 *           "/"
+	 *          /   \
+	 *  test_kill   test_weather
+	 *                /  |  \
+	 *           clear rain  thunder
 	 * 
 	 * 
 	 * 
@@ -70,12 +70,12 @@ public class BasicCommands {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			//Make some new nodes
 			LiteralCommandNode<ServerCommandSource> killNode = CommandManager
-					.literal("kill")
+					.literal("test_kill")
 					.executes(new CustomKillCommand())
 					.build();
 
 			LiteralCommandNode<ServerCommandSource> weatherNode = CommandManager
-					.literal("weather")
+					.literal("test_weather")
 					.build();
 
 			LiteralCommandNode<ServerCommandSource> clearNode = CommandManager
@@ -140,41 +140,24 @@ public class BasicCommands {
 	
 	public static class CustomWeatherCommand {
 		public static int clear(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-			ServerCommandSource source = context.getSource();
-			WorldProperties worldProperties = source.getWorld().getLevelProperties();
-			if (worldProperties instanceof ServerWorldProperties) {
-				ServerWorldProperties props = (ServerWorldProperties) worldProperties;
-				props.setClearWeatherTime(6000);
-				props.setRainTime(0);
-				props.setThunderTime(0);
-				props.setThundering(false);
-			}
-			worldProperties.setRaining(false);
+			context.getSource().getWorld().setWeather(6000, 0, false, false);
+			context.getSource().sendFeedback(Text.translatable("commands.weather.set.clear"), true);
 			
-			source.sendFeedback(Text.translatable("commands.weather.set.clear"), true);
 			return 6000;
 			//Often we return a positive number related to what we successfully did,
 			//in this case the number of clear-weather ticks we set
 		}
 
 		public static int rain(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-			/* we could improve this impl but it's an example */
-			context.getSource().getWorld().getLevelProperties().setRaining(true);
-			return 1;
+			context.getSource().getWorld().setWeather(0, 6000, true, false);
+			context.getSource().sendFeedback(Text.translatable("commands.weather.set.rain"), true);
+			return 6000;
 		}
 
 		public static int thunder(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-			/* we could improve this impl but it's an example */
-			WorldProperties worldProperties = context.getSource().getWorld().getLevelProperties();
-			if (worldProperties instanceof ServerWorldProperties) {
-				ServerWorldProperties props = (ServerWorldProperties) worldProperties;
-				props.setThunderTime(6000);
-				props.setThundering(true);
-				
-				return 1;
-			} else {
-				return -1;
-			}
+			context.getSource().getWorld().setWeather(0, 6000, true, true);
+			context.getSource().sendFeedback(Text.translatable("commands.weather.set.thunder"), true);
+			return 6000;
 		}
 	}
 }
